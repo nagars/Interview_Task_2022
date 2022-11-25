@@ -10,8 +10,6 @@
 
 #include "time.h"
 
-#define DISPLAY_PORT UART_1    /**< #define in case UART needs to be changed later*/
-
 /*********Structs / Enums***********/
 
 /*********Functions***********/

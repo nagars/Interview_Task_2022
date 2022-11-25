@@ -9,8 +9,7 @@
 */
 
 #include <stdint.h>
-
-#define RTC_PORT    UART_0  /**< #define in case UART needs to be changed later*/
+#include "common.h"
 
 /*********Structs / Enums***********/
 

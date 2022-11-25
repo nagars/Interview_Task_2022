@@ -10,6 +10,7 @@
 
 #include "time.h"
 #include "display.h"
+#include "common.h"
 
 extern st_para_struct st_state_data;    /**<Struct containing state machine flags/data*/
 extern (*p_func_state)(void);           /**<Global function pointer for state machine*/

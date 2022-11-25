@@ -9,6 +9,7 @@
 */
 
 #include "time.h"
+#include "common.h"
 
 /*********Structs / Enums***********/
 
@@ -17,23 +18,23 @@
 /**
  * @brief   :   Function Description: displays time on screen
  * @param   :   time_struct* - pointer to struct to store time
- * @return  :   void
-*/
-void display_time(time_struct*);
+ * @return  :   FUNC_STATUS
+ * */
+FUNC_STATUS display_time(time_struct*);
 
 /**
  * @brief   :   Function Description: displays date on screen
  * @param   :   date_struct* - pointer to struct to store date values
- * @return  :   void
-*/
-void display_date(date_struct*);
+ * @return  :   FUNC_STATUS
+ * */
+FUNC_STATUS display_date(date_struct*);
 
 /**
  * @brief   :   Function Description: Clears the screen
  * @param   :   void
- * @return  :   void
-*/
-void display_reset(void);
+ * @return  :   FUNC_STATUS
+ * */
+FUNC_STATUS display_reset(void);
 
 /**
  * @brief   :   Function Description: Turns on the backlight
@@ -48,5 +49,13 @@ void enable_backlight(void);
  * @return  :   void
 */
 void disable_backlight(void);
+
+/**
+ * @brief   :   Function Description: Sends UART data to display
+ * @param   :   uint8_t* - Pointer to buffer of data to send
+ * @param   :   uint8_t - Number of bytes to send
+ * @return  :   FUNC_STATUS
+ * */
+FUNC_STATUS send_to_display(uint8_t*, uint8_t);
 
 #endif

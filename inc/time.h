@@ -67,6 +67,20 @@ FUNC_STATUS send_to_rtc(uint8_t*, uint8_t);
  * @param   :   uint8_t* - Pointer to rx buffer
  * @return  :   FUNC_STATUS
 */
-FUNC_STATUS read_from_rtc(uint8_t* p_buff);
+FUNC_STATUS read_from_rtc(uint8_t* );
+
+/**
+ * @brief   :   Function Description: Receives data from RTC via UART and fills time struct
+ * @param   :   date_struct* - pointer to date struct
+ * @return  :   FUNC_STATUS
+*/
+FUNC_STATUS return_date(date_struct*);
+
+/**
+ * @brief   :   Function Description: Receives data from RTC via UART and fills time struct
+ * @param   :   time_struct* - pointer to time struct
+ * @return  :   FUNC_STATUS
+*/
+FUNC_STATUS return_time(time_struct*);
 
 #endif

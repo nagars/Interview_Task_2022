@@ -1,9 +1,14 @@
 #include "../inc/st_machine.h"
 
-st_para_struct st_state_data;     /**<Struct containing state machine flags/data*/
-(*p_func_state)(void);          /**<Global function pointer for state machine*/
+static st_para_struct st_state_data;       /**<Struct containing state machine flags/data*/
+void (*p_func_state)(void);                /**<Global function pointer for state machine*/
 
-extern uint8_t rtc_data_ready_flag;    /**<Flag to track if data is available from RTC*/
+static uint8_t rtc_data_ready_flag;         /**<Flag to track if data is available from RTC*/
+static uint8_t rtc_data_requested_flag;     /**<Tracks if rtc data request was sent*/
+static uint8_t backlight_active_flag;       /**<Tracks if balcklight is on or not*/
+
+static time_struct time;       /**<Struct to store rtc / stopwatch time*/
+static date_struct date;       /**<Struct to store rtc date*/
 
 /**
  * @brief   :   Function Description: Transitions from current state to Time Mode State
@@ -13,22 +18,55 @@ extern uint8_t rtc_data_ready_flag;    /**<Flag to track if data is available fr
 void trans_to_TimeMode(void){
 
     /**<Change state variable*/
+    st_state_data.st_state = TIME_MODE;
+
+    /**<Clear flags*/
+    rtc_data_requested_flag = FALSE;
+    rtc_data_ready_flag = FALSE;
 
     /**<While loop*/
+    while(1){
 
-    /**<Request new data from RTC*/
+    /**<Check if any request for data is pending*/
+    if(rtc_data_requested_flag == FALSE){ 
+
+        /**Request new time data*/
+        request_time();
+        /**<Set data requested flag*/
+        rtc_data_requested_flag = TRUE;
+
+    }
 
     /**<Check for new data from RTC*/
+    if(rtc_data_ready_flag == TRUE){
+        
+        /**<If available, read data*/
+        return_time(&time);
+        
+        /**<Update display*/
+        display_time(&time);
 
-        /**<If available, update display*/
+        /**<Request fulfilled, reset data requested and data ready flags*/
+        rtc_data_requested_flag = FALSE;
+        rtc_data_ready_flag = FALSE;
+
+    }
 
     /**<Check for Mode button pressed*/
+    if(st_state_data.modebutton_event == TRUE)
 
         /**<Change state machine pointer to next state (Date mode)*/
+        p_func_state = trans_to_DateMode;
+
+        /**<Clear mode button event flag*/
+        st_state_data.modebutton_event = FALSE;
 
         /**<Return*/
+        return;
 
-    /**<loop*/
+    }/**<loop*/
+
+    return;
 }
 
 /**
@@ -39,23 +77,54 @@ void trans_to_TimeMode(void){
 void trans_to_DateMode(void){
 
     /**<Change state variable*/
+    st_state_data.st_state = DATE_MODE;
+
+    /**<Clear flags*/
+    rtc_data_requested_flag = FALSE;
+    rtc_data_ready_flag = FALSE;
 
     /**<While loop*/
+    while(1){
 
-    /**<Request data from RTC*/
+    /**<Check if any request for data is pending*/
+    if(rtc_data_requested_flag == FALSE){ 
 
-    /**<Check for new data*/
+        /**Request new time data*/
+        request_date();
+        /**<Set data requested flag*/
+        rtc_data_requested_flag = TRUE;
+
+    }
+
+    /**<Check for new data from RTC*/
+    if(rtc_data_ready_flag == TRUE){
+        
+        /**<If available, read data*/
+        return_date(&date);
         
         /**<Update display*/
+        display_date(&date);
+
+        /**<Request fulfilled, reset data requested and data ready flags*/
+        rtc_data_requested_flag = FALSE;
+        rtc_data_ready_flag = FALSE;
+
+    }
 
     /**<Check for Mode button pressed*/
-
+        if(st_state_data.modebutton_event == TRUE)
         /**<Change state machine pointer to next state (Stop watch mode)*/
+        p_func_state = trans_to_StopWatchMode_Reset;
+
+        /**<Clear mode button event flag*/
+        st_state_data.modebutton_event = FALSE;
 
         /**<Return*/
+        return;
 
-    /**<loop*/
+    }/**<loop*/
 
+    return;
 }
 
 /**
@@ -66,6 +135,7 @@ void trans_to_DateMode(void){
 void trans_to_StopWatchMode_Reset(void){
 
     /**<Change state variable*/
+    st_state_data.st_state = STOPWATCH_MODE_RESET;
 
     /**<Reset Display*/
 
@@ -167,7 +237,7 @@ void trans_to_StopWatchMode_Paused(void){
 __ISR__ void UART_receive_event(UART_e uart_port){
 
     /**<Check if data is available on UART0 (RTC)*/
-
+    if(uart_port == RTC_PORT){
         /**<Set flag based on current state machine state
          * I chose to use flags rather than directly fill the structs with
          * updated time or date data as the ISR maybe called when the main program
@@ -177,6 +247,7 @@ __ISR__ void UART_receive_event(UART_e uart_port){
         */
 
        rtc_data_ready_flag = TRUE;
+    }
 
     /**<Check if data is available on UART1 (DISPLAY)*/
     /**<Note: According to current requirements, should never happen*/
@@ -192,15 +263,50 @@ __ISR__ void UART_receive_event(UART_e uart_port){
 */
 __ISR__ void GPIO_input_change_event(port_e gpio_port, uint8_t pin){
 
-    /**<Check which GPIO triggered the ISR*/
+    /**<Check which GPIO port triggered the ISR*/
+    if(gpio_port == PORT_A){
 
-        /**<If Port A, GPIO 0, set / clear backlight (Port B, GPIO 0)*/
+        switch(pin){
 
-        /**<If Port A, GPIO 1, set/clear Mode button flag*/
+        case LIGHT_GPIO_IN:
+            /**<If Port A, GPIO 0, set / clear backlight (Port B, GPIO 0)*/
+            if(backlight_active_flag == TRUE){
+                /**<Disable backlight*/
+                disable_backlight();
+            }else if(backlight_active_flag == FALSE){
+                enable_backlight();
+            }
 
-        /**<If Port A, GPIO 2, set/clear start/stop button flag*/
+            break;
 
-        /**<If Port A, GPIO 3, set/clear reset button flag*/
+        case MODE_GPIO_IN:
+            /**<If Port A, GPIO 1, set/clear Mode button flag*/
+            st_state_data.modebutton_event = TRUE;
+
+            break;
+        
+        case START_STOP_GPIO_IN:
+            /**<If Port A, GPIO 2, set/clear start/stop button flag*/
+             if(st_state_data.startbutton_event == FALSE){  /**<Assumed stopwatch is in reset or paused*/
+                st_state_data.startbutton_event = TRUE;
+                st_state_data.stopbutton_event = FALSE;
+             }else if(st_state_data.stopbutton_event == FALSE){ /**<Assumed stop watch is counting*/
+                st_state_data.startbutton_event = FALSE;
+                st_state_data.stopbutton_event = TRUE;
+             }
+
+            break;
+
+        case RESET_GPIO_IN:
+            /**<If Port A, GPIO 3, set/clear reset button flag*/ 
+            st_state_data.resetbutton_event = TRUE;
+            
+            break;
+
+        default:
+            break;
+        }
+    }
 
     return;
 

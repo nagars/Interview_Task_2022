@@ -1,6 +1,6 @@
 #include "inc/st_machine.h"
 
-ERRNO error;    /**<Global variable to store error data*/
+ERRNO error;                            /**<Global variable to store error data*/
 
 int main (void){
 

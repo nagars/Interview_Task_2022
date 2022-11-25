@@ -1,7 +1,5 @@
 #include "../inc/time.h"
 
-uint8_t rtc_data_ready_flag;    /**<Flag to track if data is available from RTC*/
-
 /**
  * @brief   :   Function Description: Requests time from rtc via uart
  * @param   :   void
@@ -129,9 +127,80 @@ FUNC_STATUS read_from_rtc(uint8_t* p_buff){
         /**<If number of characters to read exceeds buffer size, exit with error*/
         if(n >= UART_RX_BUF_SIZE){
             error = UART_RX_BUFFER_FULL_ERR;
-            return FUNC_STATUS;
+            return FUNC_FAILURE;
         }
     }
 
     return FUNC_SUCCESS;
+}
+
+/**
+ * @brief   :   Function Description: Receives data from RTC via UART and fills time struct
+ * @param   :   time_struct* - pointer to time struct
+ * @return  :   FUNC_STATUS
+*/
+FUNC_STATUS return_time(time_struct* p_time){
+
+    /**<Check for NULL pointer*/
+    if(p_time == NULL){
+        error = NULL_POINTER_ERR;       /**<Set error number*/
+        return FUNC_FAILURE;     
+    }
+
+    uint8_t rtc_uart_rx_buf[UART_RX_BUF_SIZE];  /**<Uart receive buffer for RTC*/
+
+    /**<get data*/
+    if(read_from_rtc(rtc_uart_rx_buf) == FUNC_FAILURE){
+        return FUNC_FAILURE;
+    }
+
+    /**<Validate data*/
+    if(rtc_uart_rx_buf[0] == 0xFE){
+        /**<Header is valid*/
+        p_time->hour = rtc_uart_rx_buf[1];
+        p_time->min = rtc_uart_rx_buf[2];
+        p_time->sec = rtc_uart_rx_buf[3];
+        
+        return FUNC_SUCCESS;
+    } 
+
+    /**<Header is invalid*/
+    error = RTC_DATA_VALID_ERR; /**<Set error number*/
+    return FUNC_FAILURE;
+}
+
+
+/**
+ * @brief   :   Function Description: Receives data from RTC via UART and fills time struct
+ * @param   :   date_struct* - pointer to date struct
+ * @return  :   FUNC_STATUS
+*/
+FUNC_STATUS return_date(date_struct* p_date){
+
+    /**<Check for NULL pointer*/
+    if(p_date == NULL){
+        error = NULL_POINTER_ERR;       /**<Set error number*/
+        return FUNC_FAILURE;     
+    }
+
+    uint8_t rtc_uart_rx_buf[UART_RX_BUF_SIZE];  /**<Uart receive buffer for RTC*/
+
+    /**<get data*/
+    if(read_from_rtc(rtc_uart_rx_buf) == FUNC_FAILURE){
+        return FUNC_FAILURE;
+    }
+
+    /**<Validate data*/
+    if(rtc_uart_rx_buf[0] == 0xFE){
+        /**<Header is valid*/
+        p_date->day = rtc_uart_rx_buf[1];
+        p_date->month = rtc_uart_rx_buf[2];
+        p_date->year = rtc_uart_rx_buf[3];
+        
+        return FUNC_SUCCESS;
+    } 
+
+    /**<Header is invalid*/
+    error = RTC_DATA_VALID_ERR; /**<Set error number*/
+    return FUNC_FAILURE;
 }

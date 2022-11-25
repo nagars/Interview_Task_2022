@@ -12,7 +12,6 @@
 #include "display.h"
 #include "common.h"
 
-extern st_para_struct st_state_data;    /**<Struct containing state machine flags/data*/
 extern (*p_func_state)(void);           /**<Global function pointer for state machine*/
 
 /*********Structs / Enums***********/
@@ -32,9 +31,8 @@ typedef enum{
  * @brief   :   Struct used to define flags / parameters required by the state machine
 */
 typedef struct{
-    uint8_t backlt_active;
-    uint8_t backltbutton_event;
-    uint8_t stopbutton_event;
+    uint8_t modebutton_event;
+    uint8_t start_stopbutton_event;
     uint8_t startbutton_event;
     uint8_t resetbutton_event;
     ST_MACHINE_STATE st_state;

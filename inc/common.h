@@ -16,7 +16,7 @@ extern ERRNO error;     /**<Global error number variable. Set upon error, else 0
 #define DISPLAY_BAUD    9600        /**<Baud rate of Display uart*/
 #define RTC_BAUD        9600        /**<Baud rate of RTC Uart*/
 
-#define UART_RX_BUF_SIZE    5       /**<Buffer size of UART receive buf*/
+#define UART_RX_BUF_SIZE    4       /**<Buffer size of UART receive buf*/
 
 /**<Input GPIO pins defined on Port A*/
 #define LIGHT_GPIO_IN           0   /**<Input for backlight enable/disable button*/
@@ -52,6 +52,7 @@ typedef enum{
     INVALID_DATE_ERR,
     UART_RX_BUFFER_FULL_ERR,
     MAX_COUNT_VAL_ERR,
+    RTC_DATA_VALID_ERR,
 }ERRNO;
 
 #endif

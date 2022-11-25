@@ -40,6 +40,9 @@ FUNC_STATUS display_time(time_struct* p_time){
     tx_buf[3] = p_time->min; 
     tx_buf[4] = p_time->sec; 
 
+    /**<Reset display*/
+    display_reset();
+
     /**<Transmit*/
     if(send_to_display(tx_buf, sizeof(tx_buf)) == FUNC_FAILURE){
         return FUNC_FAILURE;
@@ -117,6 +120,9 @@ void display_date(date_struct* p_date){
     tx_buf[2] = p_date->day; 
     tx_buf[3] = p_date->month; 
     tx_buf[4] = p_date->year; 
+
+    /**<Reset display*/
+    display_reset();
 
     /**<Transmit*/
     if(send_to_display(tx_buf, sizeof(tx_buf)) == FUNC_FAILURE){

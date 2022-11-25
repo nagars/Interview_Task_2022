@@ -32,7 +32,7 @@ typedef enum{
 */
 typedef struct{
     uint8_t modebutton_event;
-    uint8_t start_stopbutton_event;
+    uint8_t stopbutton_event;
     uint8_t startbutton_event;
     uint8_t resetbutton_event;
     ST_MACHINE_STATE st_state;

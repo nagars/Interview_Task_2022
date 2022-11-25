@@ -3,6 +3,8 @@
 st_para_struct st_state_data;     /**<Struct containing state machine flags/data*/
 (*p_func_state)(void);          /**<Global function pointer for state machine*/
 
+extern uint8_t rtc_data_ready_flag;    /**<Flag to track if data is available from RTC*/
+
 /**
  * @brief   :   Function Description: Transitions from current state to Time Mode State
  * @param   :   void
@@ -14,9 +16,11 @@ void trans_to_TimeMode(void){
 
     /**<While loop*/
 
+    /**<Request new data from RTC*/
+
     /**<Check for new data from RTC*/
 
-    /**<If available, update display*/
+        /**<If available, update display*/
 
     /**<Check for Mode button pressed*/
 
@@ -40,7 +44,9 @@ void trans_to_DateMode(void){
 
     /**<Request data from RTC*/
 
-    /**<Update display*/
+    /**<Check for new data*/
+        
+        /**<Update display*/
 
     /**<Check for Mode button pressed*/
 
@@ -162,11 +168,15 @@ __ISR__ void UART_receive_event(UART_e uart_port){
 
     /**<Check if data is available on UART0 (RTC)*/
 
-        /**<Set flag based on curretn state machine state
+        /**<Set flag based on current state machine state
          * I chose to use flags rather than directly fill the structs with
-         * update time or date data as the ISR maybe called when the main program
+         * updated time or date data as the ISR maybe called when the main program
          * is operating on one of those structs
+         * 
+         * Ideally one should be able to disable ISR's in critical code
         */
+
+       rtc_data_ready_flag = TRUE;
 
     /**<Check if data is available on UART1 (DISPLAY)*/
     /**<Note: According to current requirements, should never happen*/

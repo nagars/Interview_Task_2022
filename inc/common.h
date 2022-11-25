@@ -16,6 +16,8 @@ extern ERRNO error;     /**<Global error number variable. Set upon error, else 0
 #define DISPLAY_BAUD    9600        /**<Baud rate of Display uart*/
 #define RTC_BAUD        9600        /**<Baud rate of RTC Uart*/
 
+#define UART_RX_BUF_SIZE    5       /**<Buffer size of UART receive buf*/
+
 /**<Input GPIO pins defined on Port A*/
 #define LIGHT_GPIO_IN           0   /**<Input for backlight enable/disable button*/
 #define MODE_GPIO_IN            1   /**<Input for Mode selection button*/
@@ -29,6 +31,10 @@ extern ERRNO error;     /**<Global error number variable. Set upon error, else 0
 #define OUTPUT  0       /**<GPIO is defined as output type*/
 #define INPUT   1       /**<GPIO is defined as input type*/
 
+/**<Flag values*/
+#define TRUE    1
+#define FALSE   0
+
 /**
  * @brief   : Enum to store return value of functions
 */
@@ -37,10 +43,15 @@ typedef enum{
     FUNC_FAILURE = -1,
 }FUNC_STATUS;
 
+/**
+ * @brief   : Enum to store error defintions
+*/
 typedef enum{
     NULL_POINTER_ERR,
     INVALID_TIME_ERR,
     INVALID_DATE_ERR,
+    UART_RX_BUFFER_FULL_ERR,
+    MAX_COUNT_VAL_ERR,
 }ERRNO;
 
 #endif

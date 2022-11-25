@@ -35,23 +35,38 @@ typedef struct{
 
 /**
  * @brief   :   Function Description: Requests time from rtc via uart
- * @param   :   time_struct* - pointer to struct to store time values from rtc
- * @return  :   void
+ * @param   :   void
+ * @return  :   FUNC_STATUS
 */
-void get_time(time_struct*);
+FUNC_STATUS request_time(void);
 
 /**
  * @brief   :   Function Description: Requests date from rtc via uart
- * @param   :   date_struct* - pointer to struct to store date values from rtc 
- * @return  :   void
+ * @param   :   void
+ * @return  :   FUNC_STATUS
 */
-void get_date(date_struct*);
+FUNC_STATUS request_date(void);
 
 /**
  * @brief   :   Function Description: increments the time in the struct by 1 sec
- * @param   :   date_struct* - pointer to store time data to increment by 1 sec
- * @return  :   void
+ * @param   :   time_struct* - pointer to store time data to increment by 1 sec
+ * @return  :   FUNC_STATUS
 */
-void increment_sec(time_struct*);
+FUNC_STATUS increment_sec(time_struct*);
+
+/**
+ * @brief   :   Function Description: Sends UART data to RTC
+ * @param   :   uint8_t* - Pointer to buffer of data to send
+ * @param   :   uint8_t - Number of bytes to send
+ * @return  :   FUNC_STATUS
+*/
+FUNC_STATUS send_to_rtc(uint8_t*, uint8_t);
+
+/**
+ * @brief   :   Function Description: Receives data from RTC via UART
+ * @param   :   uint8_t* - Pointer to rx buffer
+ * @return  :   FUNC_STATUS
+*/
+FUNC_STATUS read_from_rtc(uint8_t* p_buff);
 
 #endif

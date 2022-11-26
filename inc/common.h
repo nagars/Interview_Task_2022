@@ -8,8 +8,11 @@
  * @details :    Header file used to define common definitions and functions
 */
 
+#include <stdint.h>
+
 extern ERRNO error;     /**<Global error number variable. Set upon error, else 0*/
 
+/**<Uart settings*/
 #define DISPLAY_PORT    UART_1      /**< #define in case UART needs to be changed later*/
 #define RTC_PORT        UART_0      /**< #define in case UART needs to be changed later*/
 
@@ -35,6 +38,8 @@ extern ERRNO error;     /**<Global error number variable. Set upon error, else 0
 #define TRUE    1
 #define FALSE   0
 
+/*********Structs / Enums***********/
+
 /**
  * @brief   : Enum to store return value of functions
 */
@@ -44,15 +49,15 @@ typedef enum{
 }FUNC_STATUS;
 
 /**
- * @brief   : Enum to store error defintions
+ * @brief   : Enum to store error definitions
 */
 typedef enum{
-    NULL_POINTER_ERR,
-    INVALID_TIME_ERR,
-    INVALID_DATE_ERR,
-    UART_RX_BUFFER_FULL_ERR,
-    MAX_COUNT_VAL_ERR,
-    RTC_DATA_VALID_ERR,
+    NULL_POINTER_ERR,           /**<Null pointer given as parameter to function*/
+    INVALID_TIME_ERR,           /**<Time returned from RTC / calculated is invalid*/
+    INVALID_DATE_ERR,           /**<Date returned from RTC / calculated is invalid*/
+    UART_RX_BUFFER_FULL_ERR,    /**<Bytes of data available to read exceeds RX buffer size*/
+    MAX_COUNT_VAL_ERR,          /**Stop watch has counted up to its maximum allowable value*/
+    RTC_DATA_INVALID_ERR,       /**<Header of data received from RTC is invalid*/
 }ERRNO;
 
 #endif

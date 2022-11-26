@@ -12,7 +12,7 @@
 #include "display.h"
 #include "common.h"
 
-extern (*p_func_state)(void);           /**<Global function pointer for state machine*/
+extern void (*p_func_state)(void);           /**<Global function pointer for state machine*/
 
 /*********Structs / Enums***********/
 

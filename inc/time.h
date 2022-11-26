@@ -8,7 +8,6 @@
  * @details :    Header file used to define all time calculation / determination based functionality
 */
 
-#include <stdint.h>
 #include "common.h"
 
 /*********Structs / Enums***********/

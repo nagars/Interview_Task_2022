@@ -1,3 +1,10 @@
+/**
+ * @file    :    main.c
+ * @author  :    Shawn Nagar
+ * @version :    v1.0
+ * @details :    Source file for main program loop
+*/
+
 #include "inc/st_machine.h"
 
 ERRNO error;                            /**<Global variable to store error data*/

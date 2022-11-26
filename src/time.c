@@ -147,7 +147,7 @@ FUNC_STATUS return_time(time_struct* p_time){
         return FUNC_FAILURE;     
     }
 
-    uint8_t rtc_uart_rx_buf[UART_RX_BUF_SIZE];  /**<Uart receive buffer for RTC*/
+    uint8_t rtc_uart_rx_buf[UART_RX_BUF_SIZE] = {0};  /**<Uart receive buffer for RTC*/
 
     /**<get data*/
     if(read_from_rtc(rtc_uart_rx_buf) == FUNC_FAILURE){
@@ -165,7 +165,7 @@ FUNC_STATUS return_time(time_struct* p_time){
     } 
 
     /**<Header is invalid*/
-    error = RTC_DATA_VALID_ERR; /**<Set error number*/
+    error = RTC_DATA_INVALID_ERR; /**<Set error number*/
     return FUNC_FAILURE;
 }
 
@@ -183,7 +183,7 @@ FUNC_STATUS return_date(date_struct* p_date){
         return FUNC_FAILURE;     
     }
 
-    uint8_t rtc_uart_rx_buf[UART_RX_BUF_SIZE];  /**<Uart receive buffer for RTC*/
+    uint8_t rtc_uart_rx_buf[UART_RX_BUF_SIZE] = {0};  /**<Uart receive buffer for RTC*/
 
     /**<get data*/
     if(read_from_rtc(rtc_uart_rx_buf) == FUNC_FAILURE){
@@ -201,6 +201,6 @@ FUNC_STATUS return_date(date_struct* p_date){
     } 
 
     /**<Header is invalid*/
-    error = RTC_DATA_VALID_ERR; /**<Set error number*/
+    error = RTC_DATA_INVALID_ERR; /**<Set error number*/
     return FUNC_FAILURE;
 }

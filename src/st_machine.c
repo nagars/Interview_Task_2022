@@ -4,10 +4,10 @@ static st_para_struct st_state_data; /**<Struct containing state machine flags/d
 void (*p_func_state)(void);          /**<Global function pointer for state machine*/
 
 static uint8_t rtc_data_ready_flag;     /**<Flag to track if data is available from RTC*/
-static uint8_t rtc_data_requested_flag; /**<Tracks if rtc data request was sent*/
+static uint8_t rtc_data_requested_flag; /**<Tracks if rtc data request was sent to rtc*/
 static uint8_t backlight_active_flag;   /**<Tracks if backlight is on or not*/
 
-static time_struct time; /**<Struct to store rtc / stopwatch time*/
+static time_struct time; /**<Struct to store rtc time / stopwatch counter*/
 static date_struct date; /**<Struct to store rtc date*/
 
 /**
@@ -32,7 +32,6 @@ void trans_to_TimeMode(void)
         /**<Check if any request for data is pending*/
         if (rtc_data_requested_flag == FALSE)
         {
-
             /**Request new time data*/
             request_time();
             /**<Set data requested flag*/
@@ -55,16 +54,17 @@ void trans_to_TimeMode(void)
         }
 
         /**<Check for Mode button pressed*/
-        if (st_state_data.modebutton_event == TRUE)
+        if (st_state_data.modebutton_event == TRUE){
 
             /**<Change state machine pointer to next state (Date mode)*/
             p_func_state = trans_to_DateMode;
 
-        /**<Clear mode button event flag*/
-        st_state_data.modebutton_event = FALSE;
+            /**<Clear mode button event flag*/
+            st_state_data.modebutton_event = FALSE;
 
-        /**<Return*/
-        return;
+            /**<Return*/
+            return;
+        }
 
     } /**<loop*/
 
@@ -116,15 +116,16 @@ void trans_to_DateMode(void)
         }
 
         /**<Check for Mode button pressed*/
-        if (st_state_data.modebutton_event == TRUE)
+        if (st_state_data.modebutton_event == TRUE){
             /**<Change state machine pointer to next state (Stop watch mode)*/
             p_func_state = trans_to_StopWatchMode_Reset;
 
-        /**<Clear mode button event flag*/
-        st_state_data.modebutton_event = FALSE;
+            /**<Clear mode button event flag*/
+            st_state_data.modebutton_event = FALSE;
 
-        /**<Return*/
-        return;
+            /**<Return*/
+            return;
+        }
 
     } /**<loop*/
 
@@ -210,6 +211,9 @@ void trans_to_StopWatchMode_Counting(void)
 
             /**<Read from UART buffer to flush it. Discard data*/
             read_from_rtc(uart_rx);
+
+            /**<Clear rtc data ready flag*/
+            rtc_data_ready_flag = FALSE;
         }
 
         /**<Check for Start/stop button pressed*/
@@ -353,10 +357,18 @@ __ISR__ void GPIO_input_change_event(port_e gpio_port, uint8_t pin)
             {
                 /**<Disable backlight*/
                 disable_backlight();
+
+                /**<Clear flag*/
+                backlight_active_flag = FALSE;
             }
             else if (backlight_active_flag == FALSE)
             {
+                /**<Enable backlight*/
                 enable_backlight();
+
+                /**<Set flag*/
+                backlight_active_flag = TRUE;
+
             }
 
             break;

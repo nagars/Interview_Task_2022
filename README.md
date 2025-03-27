@@ -1,7 +1,5 @@
-# Pixxel_Task
-
 ## Description:
-Temporary repository for the Pixxel interview task. 
+Temporary repository for xxx company interview task. 
 
 ## Objective: 
 Design the firmware for a watch in c
